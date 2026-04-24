@@ -5,6 +5,7 @@ Conecta a Snowflake, maneja autenticación y expone APIs para dashboards
 
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
+from flask import send_from_directory
 import snowflake.connector
 import json
 from datetime import datetime, timedelta
@@ -393,6 +394,10 @@ def health():
         conn.close()
         return jsonify({'status': 'ok', 'snowflake': 'connected'})
     return jsonify({'status': 'error', 'snowflake': 'disconnected'}), 500
+
+@app.route('/')
+def serve_index():
+    return send_from_directory('.', 'fqp_reporteria_v2.html')
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5000)
