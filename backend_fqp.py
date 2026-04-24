@@ -396,8 +396,12 @@ def health():
     return jsonify({'status': 'error', 'snowflake': 'disconnected'}), 500
 
 @app.route('/')
-def serve_index():
-    return send_from_directory('.', 'fqp_reporteria_v2.html')
+def serve_frontend():
+    return send_from_directory('public', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('public', path)
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5000)
