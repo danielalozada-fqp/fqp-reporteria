@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FQP — Centro de Reportería</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Merriweather:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --azul:       #003F7D;
+  --azul-med:   #0057AA;
+  --azul-claro: #E8F0F9;
+  --azul-borde: #C5D8EF;
+  --verde:      #1A7A4A;
+  --verde-bg:   #EAF5EF;
+  --amarillo:   #8A6200;
+  --amarillo-bg:#FDF6E3;
+  --rojo:       #B83232;
+  --rojo-bg:    #FDF0EE;
+  --gris-bg:    #F4F6F9;
+  --gris-borde: #DDE3EC;
+  --texto:      #1A2535;
+  --muted:      #6B7A94;
+  --muted2:     #A8B4C8;
+  --blanco:     #FFFFFF;
+  --font:       'Lato', sans-serif;
+  --font-serif: 'Merriweather', serif;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--gris-bg);
+  color: var(--texto);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* LOGIN */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+}
+
+.login-left {
+  width: 420px;
+  flex-shrink: 0;
+  background: var(--azul);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-left::before {
+  content:'';
+  position: absolute;
+  bottom: -80px; right: -80px;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 1;
+}
+
+.login-logo-mark {
+  width: 44px; height: 44px;
+  background: var(--blanco);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font);
+  font-weight: 900;
+  font-size: 16px;
+  color: var(--azul);
+}
+
+.login-logo-text {
+  color: white;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.login-tagline {
+  color: rgba(255,255,255,0.9);
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.login-sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+
+.login-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blanco);
+  padding: 40px;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--texto);
+  margin-bottom: 6px;
+}
+
+.login-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--gris-borde);
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--texto);
+  background: var(--blanco);
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.form-input:focus { border-color: var(--azul-med); }
+
+.btn-login {
+  width: 100%;
+  padding: 13px;
+  background: var(--azul);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+  letter-spacing: 0.03em;
+}
+
+.btn-login:hover { background: var(--azul-med); }
+
+.login-error {
+  background: var(--rojo-bg);
+  border: 1px solid #e8b4b4;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--rojo);
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* APP */
+#app { display: none; min-height: 100vh; flex-direction: column; }
+
+.topbar {
+  height: 56px;
+  background: var(--azul);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.topbar-mark {
+  width: 32px; height: 32px;
+  background: white;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--azul);
+}
+
+.topbar-name {
+  color: rgba(255,255,255,0.9);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 30px; height: 30px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+}
+
+.user-info { text-align: right; }
+.user-name { font-size: 12px; font-weight: 700; color: white; }
+.user-role { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; }
+
+.btn-logout {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-logout:hover { background: rgba(255,255,255,0.18); color: white; }
+
+.app-body { display: flex; flex: 1; }
+
+.sidebar {
+  width: 228px;
+  flex-shrink: 0;
+  background: var(--blanco);
+  border-right: 1px solid var(--gris-borde);
+  padding: 20px 0;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+.nav-section {
+  padding: 0 16px;
+  margin-bottom: 20px;
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted2);
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font);
+  margin-bottom: 2px;
+}
+
+.nav-item:hover { background: var(--gris-bg); color: var(--texto); }
+.nav-item.active {
+  background: var(--azul-claro);
+  color: var(--azul);
+  font-weight: 700;
+}
+
+.nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+
+.main-content {
+  flex: 1;
+  padding: 32px 36px;
+  overflow-y: auto;
+  max-width: 1140px;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--azul);
+  letter-spacing: -0.2px;
+}
+
+.page-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+.score-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.score {
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  padding: 20px;
+  border-top: 3px solid transparent;
+  transition: box-shadow 0.2s;
+}
+
+.score:hover { box-shadow: 0 4px 20px rgba(0,63,125,0.08); }
+.score.ok { border-top-color: var(--verde); }
+.score.warn { border-top-color: #D4A017; }
+.score.bad { border-top-color: var(--rojo); }
+
+.score-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.score-num {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.score.ok .score-num { color: var(--verde); }
+.score.warn .score-num { color: var(--amarillo); }
+.score.bad .score-num { color: var(--rojo); }
+
+.score-detail {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ADMIN */
+.admin-section {
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.admin-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-new {
+  background: var(--verde);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.btn-new:hover { background: #156a3c; }
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th {
+  background: var(--gris-bg);
+  padding: 10px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted2);
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.users-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--gris-borde);
+  font-size: 13px;
+}
+
+.users-table tr:hover { background: var(--gris-bg); }
+
+.role-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.rp-admin { background: var(--azul-claro); color: var(--azul); }
+.rp-gerente { background: var(--verde-bg); color: var(--verde); }
+.rp-ejecutivo { background: var(--amarillo-bg); color: var(--amarillo); }
+
+.status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.sb-active { background: var(--verde-bg); color: var(--verde); }
+.sb-inactive { background: #f0f0f0; color: #666; }
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  transition: opacity 0.2s;
+}
+
+.btn-icon:hover { opacity: 0.7; }
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+  background: var(--blanco);
+  border-radius: 12px;
+  padding: 32px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--texto);
+  margin-bottom: 20px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.form-group { margin-bottom: 16px; }
+
+.btn-primary {
+  width: 100%;
+  background: var(--azul);
+  color: white;
+  border: none;
+  padding: 11px;
+  border-radius: 6px;
+  font-family: var(--font);
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-primary:hover { background: var(--azul-med); }
+
+@media (max-width: 900px) {
+  .login-left { display: none; }
+  .score-row { grid-template-columns: 1fr 1fr; }
+  .sidebar { display: none; }
+  .users-table { font-size: 11px; }
+  .users-table td, .users-table th { padding: 8px 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-left">
+    <div class="login-logo">
+      <div class="login-logo-mark">FQP</div>
+      <div class="login-logo-text">Farmoquímica<br>del Pacífico</div>
+    </div>
+    <div class="login-tagline">Centro de Reportería<br>Comercial y Estratégica</div>
+    <div class="login-sub">Sistema integrado con Snowflake en tiempo real.</div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-box">
+      <div class="login-title">Iniciar sesión</div>
+      <div class="login-hint">Ingresa tus credenciales FQP</div>
+
+      <div class="login-error" id="login-error">Usuario o contraseña incorrectos.</div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="input-email" placeholder="usuario@fqp.cl" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input class="form-input" type="password" id="input-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-login" onclick="doLogin()">Ingresar</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-mark">FQP</div>
+      <span class="topbar-name">REPORTERÍA</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="user-info">
+          <div class="user-name" id="topbar-username">—</div>
+          <div class="user-role" id="topbar-role">—</div>
+        </div>
+        <div class="user-avatar" id="topbar-avatar">?</div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Salir</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="nav-section">
+        <div class="nav-label">General</div>
+        <button class="nav-item active" onclick="setPage(this,'p-home')">
+          <span class="nav-icon">⊞</span> Inicio
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Dashboards</div>
+        <button class="nav-item" onclick="setPage(this,'p-kpis')">
+          <span class="nav-icon">◈</span> KPIs en Vivo
+        </button>
+      </div>
+
+      <div class="nav-section" id="nav-admin" style="display:none">
+        <div class="nav-label">Administración</div>
+        <button class="nav-item" onclick="setPage(this,'p-admin')">
+          <span class="nav-icon">◧</span> Usuarios
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- HOME -->
+      <div id="p-home" class="page active">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Bienvenido, <span id="welcome-name">—</span></div>
+            <div class="page-sub">Centro de Reportería FQP · Datos en tiempo real desde Snowflake</div>
+          </div>
+        </div>
+
+        <div class="score-row">
+          <div class="score ok" id="score-ventas">
+            <div class="score-label">Cumplimiento Ventas</div>
+            <div class="score-num">—</div>
+            <div class="score-detail">
+              <span id="score-ventas-detail">Cargando...</span>
+            </div>
+          </div>
+          <div class="score ok" id="score-productos">
+            <div class="score-label">Productos Activos</div>
+            <div class="score-num">—</div>
+            <div class="score-detail"><span id="score-productos-detail">Cargando...</span></div>
+          </div>
+          <div class="score warn" id="score-conectado">
+            <div class="score-label">Estado Snowflake</div>
+            <div class="score-num">—</div>
+            <div class="score-detail"><span id="score-conectado-detail">Verificando...</span></div>
+          </div>
+          <div class="score ok">
+            <div class="score-label">Usuarios Activos</div>
+            <div class="score-num" id="score-usuarios">—</div>
+            <div class="score-detail"><span id="score-usuarios-detail">Cargando...</span></div>
+          </div>
+        </div>
+
+        <p style="margin-top:40px;color:var(--muted);font-size:13px;">
+          Los datos se cargan directamente desde Snowflake. El backend Flask maneja consultas SQL en tiempo real.
+        </p>
+      </div>
+
+      <!-- KPIs -->
+      <div id="p-kpis" class="page">
+        <div class="page-header">
+          <div>
+            <div class="page-title">KPIs en Vivo</div>
+            <div class="page-sub">Datos actualizados desde Snowflake</div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-title">Top 10 Productos por Unidades</div>
+          <table class="users-table" id="table-kpis">
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Unidades</th>
+                <th>Valores ($)</th>
+                <th>Puntos Venta</th>
+              </tr>
+            </thead>
+            <tbody id="kpis-body">
+              <tr><td colspan="4" style="text-align:center;color:var(--muted);">Cargando datos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-title">KPIs por Territorio</div>
+          <table class="users-table" id="table-territorial">
+            <thead>
+              <tr>
+                <th>Territorio</th>
+                <th>Meta Unidades</th>
+                <th>Meta Market Share (%)</th>
+              </tr>
+            </thead>
+            <tbody id="territorial-body">
+              <tr><td colspan="3" style="text-align:center;color:var(--muted);">Cargando datos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ADMIN -->
+      <div id="p-admin" class="page">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Gestión de Usuarios</div>
+            <div class="page-sub">Panel de administración</div>
+          </div>
+          <button class="btn-new" onclick="showNewUserModal()">+ Nuevo Usuario</button>
+        </div>
+
+        <div class="admin-section">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Nombre</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="users-body">
+              <tr><td colspan="5" style="text-align:center;">Cargando usuarios...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL NUEVO USUARIO -->
+<div id="modal-user" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-header">Nuevo Usuario</div>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="input-new-email" placeholder="usuario@fqp.cl">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nombre</label>
+      <input class="form-input" type="text" id="input-new-name" placeholder="Nombre Completo">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Rol</label>
+      <select class="form-input" id="input-new-role">
+        <option value="ejecutivo">Ejecutivo</option>
+        <option value="gerente">Gerente</option>
+        <option value="admin">Administrador</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input class="form-input" type="password" id="input-new-pass" placeholder="Mínimo 8 caracteres">
+    </div>
+
+    <button class="btn-primary" onclick="createUser()">Crear Usuario</button>
+  </div>
+</div>
+
+<script>
+const API_URL = '/api';
+let currentUser = null;
+
+// ═══════════════════════════════════════════════════════════════
+// AUTENTICACIÓN
+// ═══════════════════════════════════════════════════════════════
+
+function doLogin() {
+  const email = document.getElementById('input-email').value.toLowerCase();
+  const password = document.getElementById('input-pass').value;
+  const err = document.getElementById('login-error');
+
+  fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      currentUser = data.user;
+      err.style.display = 'none';
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      
+      document.getElementById('topbar-username').textContent = currentUser.name;
+      document.getElementById('topbar-role').textContent = currentUser.role.toUpperCase();
+      document.getElementById('topbar-avatar').textContent = currentUser.name.substring(0, 2).toUpperCase();
+      document.getElementById('welcome-name').textContent = currentUser.name;
+      
+      if (currentUser.role === 'admin') {
+        document.getElementById('nav-admin').style.display = 'block';
+        loadUsers();
+      }
+      
+      loadDashboard();
+    } else {
+      err.style.display = 'block';
+      document.getElementById('input-pass').value = '';
+    }
+  })
+  .catch(e => console.error('Error login:', e));
+}
+
+function doLogout() {
+  fetch(`${API_URL}/auth/logout`, { method: 'POST' })
+  .then(() => {
+    currentUser = null;
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('input-email').value = '';
+    document.getElementById('input-pass').value = '';
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+
+function loadDashboard() {
+  // Verificar conexión Snowflake
+  fetch(`${API_URL}/health`)
+  .then(r => r.json())
+  .then(data => {
+    if (data.status === 'ok') {
+      document.getElementById('score-conectado').className = 'score ok';
+      document.getElementById('score-conectado-detail').textContent = 'Conectado';
+    }
+  });
+
+  // Cargar KPIs resumen
+  fetch(`${API_URL}/kpis/resumen`)
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('score-ventas').querySelector('.score-num').textContent = Math.round(data.cumplimiento_ventas) + '%';
+    document.getElementById('score-ventas-detail').textContent = `${data.unidades_reales} / ${data.unidades_meta} uds`;
+    document.getElementById('score-productos').querySelector('.score-num').textContent = data.productos_activos;
+    document.getElementById('score-productos-detail').textContent = `$${(data.valores_reales/1000000).toFixed(1)}M`;
+  });
+
+  // Cargar KPIs detalle
+  loadKPIsDetalle();
+  loadKPIsTerritorial();
+}
+
+function loadKPIsDetalle() {
+  fetch(`${API_URL}/kpis/detalle`)
+  .then(r => r.json())
+  .then(data => {
+    const tbody = document.getElementById('kpis-body');
+    tbody.innerHTML = '';
+    
+    if (data.kpis && data.kpis.length > 0) {
+      data.kpis.forEach(kpi => {
+        const row = `
+          <tr>
+            <td>${kpi.marca}</td>
+            <td>${kpi.unidades.toLocaleString()}</td>
+            <td>$${(kpi.valores/1000000).toFixed(2)}M</td>
+            <td>${kpi.puntos_venta}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+  })
+  .catch(e => {
+    document.getElementById('kpis-body').innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--rojo);">Error cargando datos</td></tr>`;
+  });
+}
+
+function loadKPIsTerritorial() {
+  fetch(`${API_URL}/kpis/territorial`)
+  .then(r => r.json())
+  .then(data => {
+    const tbody = document.getElementById('territorial-body');
+    tbody.innerHTML = '';
+    
+    if (data.territorios && data.territorios.length > 0) {
+      data.territorios.forEach(t => {
+        const row = `
+          <tr>
+            <td>${t.territorio}</td>
+            <td>${t.meta_unidades.toLocaleString()}</td>
+            <td>${t.meta_market_share.toFixed(2)}%</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+  })
+  .catch(e => {
+    document.getElementById('territorial-body').innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--rojo);">Error cargando datos</td></tr>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN - USUARIOS
+// ═══════════════════════════════════════════════════════════════
+
+function loadUsers() {
+  fetch(`${API_URL}/admin/users`)
+  .then(r => r.json())
+  .then(data => {
+    const tbody = document.getElementById('users-body');
+    tbody.innerHTML = '';
+    
+    document.getElementById('score-usuarios').textContent = data.users.length;
+    
+    data.users.forEach(user => {
+      const statusClass = user.status === 'active' ? 'sb-active' : 'sb-inactive';
+      const statusText = user.status === 'active' ? 'ACTIVO' : 'INACTIVO';
+      const roleClass = `rp-${user.role}`;
+      
+      const row = `
+        <tr>
+          <td>${user.email}</td>
+          <td>${user.name}</td>
+          <td><span class="role-pill ${roleClass}">${user.role.toUpperCase()}</span></td>
+          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+          <td>
+            <button class="btn-icon" onclick="editUser('${user.email}')" title="Editar">✎</button>
+            <button class="btn-icon" onclick="deleteUser('${user.email}')" title="Desactivar">✕</button>
+          </td>
+        </tr>
+      `;
+      tbody.innerHTML += row;
+    });
+  });
+}
+
+function showNewUserModal() {
+  document.getElementById('modal-user').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal-user').classList.remove('active');
+  document.getElementById('input-new-email').value = '';
+  document.getElementById('input-new-name').value = '';
+  document.getElementById('input-new-role').value = 'ejecutivo';
+  document.getElementById('input-new-pass').value = '';
+}
+
+function createUser() {
+  const email = document.getElementById('input-new-email').value.toLowerCase();
+  const name = document.getElementById('input-new-name').value;
+  const role = document.getElementById('input-new-role').value;
+  const password = document.getElementById('input-new-pass').value;
+  
+  if (!email || !name || !password) {
+    alert('Todos los campos son obligatorios');
+    return;
+  }
+  
+  fetch(`${API_URL}/admin/users`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, name, role, password })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      closeModal();
+      loadUsers();
+      alert('Usuario creado exitosamente');
+    } else {
+      alert('Error: ' + data.error);
+    }
+  });
+}
+
+function editUser(email) {
+  alert('Edición en desarrollo');
+}
+
+function deleteUser(email) {
+  if (confirm(`¿Desactivar usuario ${email}?`)) {
+    fetch(`${API_URL}/admin/users/${email}`, { method: 'DELETE' })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        loadUsers();
+        alert('Usuario desactivado');
+      }
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════════════════════════
+
+function setPage(btn, id) {
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
