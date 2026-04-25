@@ -1,1 +1,1 @@
-web: gunicorn backend_simple:app
+web: python backend_simple.py
