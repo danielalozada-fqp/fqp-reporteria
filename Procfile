@@ -1,1 +1,1 @@
-web: gunicorn backend_fqp:app
+web: gunicorn backend_simple:app
