@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 import secrets
 from datetime import datetime
+from flask import send_from_directory
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
@@ -59,6 +60,10 @@ def get_resumen():
 @app.route('/api/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok'})
+
+@app.route('/')
+def serve_index():
+    return send_from_directory('.', 'fqp_reporteria_v2.html')
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5000)
